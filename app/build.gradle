@@ -1,0 +1,85 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+Properties properties = new Properties()
+InputStream inputStream = project.rootProject.file('local.properties').newDataInputStream() ;
+properties.load( inputStream )
+
+
+android {
+    namespace 'com.russell.androidsmb'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.russell.androidsmb"
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.1"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+//        manifestPlaceholders = [
+//                ip :properties.getProperty("server.ip"),
+//                username:properties.getProperty("server.name"),
+//                fileName : properties.getProperty("server.fileName"),
+//                password : properties.getProperty("server.password")
+//        ]
+    }
+
+    buildTypes {
+
+        release {
+
+            def  ip = properties.getProperty("server.ip")
+            buildConfigField("String", "ip","\"$ip\"")
+
+
+            def  username = properties.getProperty("server.username")
+            buildConfigField("String", "username","\"$username\"")
+
+            def  fileName = properties.getProperty("server.fileName")
+            buildConfigField("String", "fileName","\"$fileName\"")
+
+            def  password = properties.getProperty("server.password")
+            buildConfigField("String", "password","\"$password\"")
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        debug{
+            def  ip = properties.getProperty("server.ip")
+            buildConfigField("String", "ip","\"$ip\"")
+
+
+            def  username = properties.getProperty("server.username")
+            buildConfigField("String", "username","\"$username\"")
+
+            def  fileName = properties.getProperty("server.fileName")
+            buildConfigField("String", "fileName","\"$fileName\"")
+
+            def  password = properties.getProperty("server.password")
+            buildConfigField("String", "password","\"$password\"")
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.hierynomus:smbj:0.11.5'
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
