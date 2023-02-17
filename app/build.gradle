@@ -17,14 +17,8 @@ android {
         minSdk 24
         targetSdk 33
         versionCode 1
-        versionName "1.1"
+        versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-//        manifestPlaceholders = [
-//                ip :properties.getProperty("server.ip"),
-//                username:properties.getProperty("server.name"),
-//                fileName : properties.getProperty("server.fileName"),
-//                password : properties.getProperty("server.password")
-//        ]
     }
 
     buildTypes {
@@ -76,7 +70,6 @@ dependencies {
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.hierynomus:smbj:0.11.5'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.+'
