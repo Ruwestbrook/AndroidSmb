@@ -30,12 +30,61 @@ class SmbClient {
             }
             connectShare = session.connectShare(builder.fileName) as DiskShare
             connectStatus = Status.connectSuccess
+            if(onReadFileCallback!=null){
+                listFiles(onReadFilePath,onReadFileCallback!!)
+            }
         }.start()
+    }
+
+    var onReadFileCallback:OnReadFileCallback? = null
+    var onReadFilePath :String = ""
+    fun listFiles(path :String,callback :OnReadFileCallback){
+        if(connectStatus != Status.connectSuccess){
+            callback.onFail("暂未连接，稍后再试")
+            onReadFileCallback=callback
+            onReadFilePath=path
+            return
+        }
+        try {
+            val fileNameList = mutableListOf<FileInfo>()
+            val list = connectShare.list(path, null)
+            for (information in list) {
+                if(information.fileName == "." || information.fileName ==".."){
+                    continue
+                }
+                connectShare.getFileInformation(information.fileName).standardInformation.isDirectory
+                fileNameList.add(FileInfo(information.fileName,isDirectory(information.fileName)))
+            }
+            callback.onSuccess(fileNameList)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            callback.onFail(e.message ?: "获取文件名失败")
+        }
+
+    }
+
+    private fun isDirectory(path :String):Boolean=  connectShare.getFileInformation(path).standardInformation.isDirectory
+
+    fun openDirectory(path :String,callback :OnReadFileCallback){
+        try {
+            val fileNameList = mutableListOf<FileInfo>()
+            val list = connectShare.list(path, null)
+            for (information in list) {
+                if(information.fileName == "." || information.fileName ==".."){
+                    continue
+                }
+                fileNameList.add(FileInfo(information.fileName,isDirectory(path+"\\"+information.fileName)))
+            }
+            callback.onSuccess(fileNameList)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            callback.onFail(e.message ?: "获取文件名失败")
+        }
     }
 
 
     companion object{
-        class Build {
+       class Build {
             var timeOut  = 60
             var ip = ""
             var username = ""
@@ -77,6 +126,13 @@ class SmbClient {
                 smbClient.init(this)
                 return smbClient
             }
+
+        }
+
+
+        @JvmStatic
+        fun Builder(): Build {
+            return Build()
         }
 
     }
