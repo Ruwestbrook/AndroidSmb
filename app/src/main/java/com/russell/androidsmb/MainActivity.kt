@@ -26,10 +26,6 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "initStatus() called with: status = $status")
 
             }
-
-            override fun log(message: String) {
-                Log.d(TAG, "log() called with: message = $message")
-            }
         }).build()
         replaceFragment("")
 
@@ -46,6 +42,7 @@ class MainActivity : AppCompatActivity() {
                        val fragment =FileFragment(path,list)
                        val transaction = supportFragmentManager.beginTransaction()
                        transaction.replace(R.id.container,fragment)
+                       transaction.addToBackStack(null)
                        transaction.commit()
                    }
                 }

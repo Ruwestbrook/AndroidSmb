@@ -60,14 +60,7 @@ class FileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private var mFileImage:ImageView
     private var mFileName:TextView
     fun setData(fileInfo :FileInfo){
-        mFileImage.setImageDrawable(ContextCompat.getDrawable(itemView.context,
-        if (fileInfo.isDirectory){
-            R.drawable.directory
-        }else{
-            R.drawable.text_file
-        }
-            ))
-
+        mFileImage.setImageDrawable(ContextCompat.getDrawable(itemView.context,fileInfo.fileDrawable))
         mFileName.text = fileInfo.FileName
     }
 

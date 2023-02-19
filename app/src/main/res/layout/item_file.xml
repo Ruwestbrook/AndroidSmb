@@ -9,7 +9,6 @@
     <ImageView
         android:layout_width="40dp"
         android:id="@+id/file_image"
-        tools:src="@drawable/directory"
         android:layout_gravity="center"
         android:layout_height="40dp"/>
 
