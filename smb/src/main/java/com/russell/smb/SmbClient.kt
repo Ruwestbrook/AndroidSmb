@@ -4,24 +4,74 @@ import com.hierynomus.smbj.SMBClient
 import com.hierynomus.smbj.SmbConfig
 import com.hierynomus.smbj.auth.AuthenticationContext
 import com.hierynomus.smbj.connection.Connection
+import com.hierynomus.smbj.session.Session
 import com.hierynomus.smbj.share.DiskShare
 import java.util.concurrent.TimeUnit
 
-class SmbClient {
+class SmbClient(private val builder:Build) {
 
     private lateinit var connectShare: DiskShare
-    private lateinit var connection: Connection
-
+    private  var fileName =""
+    private    var clientStatus:ClientStatus? = null
     @set:Synchronized
     private  var  connectStatus = Status.initialization
 
-    fun init(builder:Build) {
+
+    private var onReadFileCallback:OnReadFileCallback? = null
+    var onReadFilePath :String = ""
+    var initTime = 0
+    fun listFiles(path :String,callback :OnReadFileCallback){
+        if(connectStatus != Status.connectSuccess){
+            onReadFileCallback=callback
+            onReadFilePath=path
+            return
+        }
+        if(!connectShare.isConnected){
+            if(initTime >2){
+                callback.onFail( "获取文件名失败")
+                clientStatus?.log("获取文件名失败")
+                initTime=0
+                return
+            }
+            connection()
+            onReadFileCallback=callback
+            onReadFilePath=path
+            initTime ++
+            return
+        }
+        try {
+            initTime=0
+            val fileNameList = mutableListOf<FileInfo>()
+            clientStatus?.log("path="+path)
+            val list = connectShare.list(path, null)
+            clientStatus?.log("list="+list)
+            list.forEach {
+
+            }
+            for (information in list) {
+                if(information.fileName == "." || information.fileName ==".."){
+                    continue
+                }
+                connectShare.getFileInformation(path+"/"+information.fileName).standardInformation.isDirectory
+                fileNameList.add(FileInfo(information.fileName,isDirectory(path+"/"+information.fileName)))
+            }
+            callback.onSuccess(fileNameList)
+            clientStatus?.log("listFiles apter connectShare .isConnected= "+connectShare.isConnected)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            callback.onFail(e.message ?: "获取文件名失败")
+        }
+
+    }
+
+    private fun connection(){
         Thread{
-            connectStatus = Status.connecting
-            val config = SmbConfig.builder().withSoTimeout(builder.timeOut)
+            clientStatus = builder.clientStatus
+            setStatus(Status.connecting)
+            val config = SmbConfig.builder().withSoTimeout(builder.timeOut.toLong(),TimeUnit.SECONDS)
                 .withReadTimeout(builder.timeOut.toLong(),TimeUnit.SECONDS).withTimeout(builder.timeOut.toLong(),TimeUnit.SECONDS).build()
             val client = SMBClient(config)
-            connection = client.connect(builder.ip)
+            val connection = client.connect(builder.ip)
             val authContext = AuthenticationContext(builder.username, builder.password.toCharArray(), null)
             val session = connection.authenticate(authContext)
             if(session?.connectShare(builder.fileName) == null){
@@ -36,65 +86,33 @@ class SmbClient {
         }.start()
     }
 
-    var onReadFileCallback:OnReadFileCallback? = null
-    var onReadFilePath :String = ""
-    fun listFiles(path :String,callback :OnReadFileCallback){
-        if(connectStatus != Status.connectSuccess){
-            callback.onFail("暂未连接，稍后再试")
-            onReadFileCallback=callback
-            onReadFilePath=path
-            return
-        }
-        try {
-            val fileNameList = mutableListOf<FileInfo>()
-            val list = connectShare.list(path, null)
-            for (information in list) {
-                if(information.fileName == "." || information.fileName ==".."){
-                    continue
-                }
-                connectShare.getFileInformation(information.fileName).standardInformation.isDirectory
-                fileNameList.add(FileInfo(information.fileName,isDirectory(information.fileName)))
-            }
-            callback.onSuccess(fileNameList)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            callback.onFail(e.message ?: "获取文件名失败")
-        }
-
-    }
+    fun getConnection() = connectShare
 
     private fun isDirectory(path :String):Boolean=  connectShare.getFileInformation(path).standardInformation.isDirectory
+    private fun setStatus(status: Status){
 
-    fun openDirectory(path :String,callback :OnReadFileCallback){
-        try {
-            val fileNameList = mutableListOf<FileInfo>()
-            val list = connectShare.list(path, null)
-            for (information in list) {
-                if(information.fileName == "." || information.fileName ==".."){
-                    continue
-                }
-                fileNameList.add(FileInfo(information.fileName,isDirectory(path+"\\"+information.fileName)))
-            }
-            callback.onSuccess(fileNameList)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            callback.onFail(e.message ?: "获取文件名失败")
-        }
+        connectStatus =status
+        clientStatus?.initStatus(status)
     }
 
 
     companion object{
        class Build {
-            var timeOut  = 60
+            var timeOut  = 6000
             var ip = ""
             var username = ""
             var password =""
             var fileName = ""
-
+            var clientStatus:ClientStatus? = null
             fun setTimeOut(time:Int):Build{
                 timeOut = time
                 return this
             }
+
+           fun setClientStatus(clientStatus:ClientStatus):Build{
+               this.clientStatus = clientStatus
+               return this
+           }
 
             fun setIp(ip:String):Build{
                 this.ip = ip
@@ -122,8 +140,8 @@ class SmbClient {
             }
 
             fun build():SmbClient{
-                val smbClient = SmbClient()
-                smbClient.init(this)
+                val smbClient = SmbClient(this)
+                smbClient.connection()
                 return smbClient
             }
 
@@ -139,6 +157,13 @@ class SmbClient {
 
     enum class Status(status:Int){
         initialization(0), connecting(1),connectFalse(2),connectSuccess(2)
+    }
+
+    interface ClientStatus{
+        fun initStatus(status:Status) {
+
+        }
+        fun log(message:String)
     }
 
 }
