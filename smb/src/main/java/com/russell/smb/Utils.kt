@@ -5,7 +5,7 @@ import java.util.*
 class Utils {
 
     companion object{
-
+        public const val SMB_TAG = "russellSmb"
         private val videoTypeList = mutableListOf("mp4","mkv","wmv")
         private val musicTypeList = mutableListOf("mp3","m4a","wav","flac")
         private val zipTypeList = mutableListOf("rar","zip","tgz")

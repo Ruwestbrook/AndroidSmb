@@ -1,4 +1,4 @@
-package com.russell.androidsmb
+package com.russell.smb
 
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +11,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.russell.smb.FileInfo
 
 class FileFragment(private val path:String,private val list: List<FileInfo>) : Fragment() {
       private lateinit var mRecyclerView :RecyclerView
@@ -26,7 +25,7 @@ class FileFragment(private val path:String,private val list: List<FileInfo>) : F
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view= inflater.inflate(R.layout.file_list_page,container,false)
         mRecyclerView = view.findViewById(R.id.file_list)
         mRecyclerView.layoutManager = GridLayoutManager(context,3)
@@ -61,7 +60,7 @@ class FileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private var mFileName:TextView
     fun setData(fileInfo :FileInfo){
         mFileImage.setImageDrawable(ContextCompat.getDrawable(itemView.context,fileInfo.fileDrawable))
-        mFileName.text = fileInfo.FileName
+        mFileName.text = fileInfo.fileName
     }
 
     init {

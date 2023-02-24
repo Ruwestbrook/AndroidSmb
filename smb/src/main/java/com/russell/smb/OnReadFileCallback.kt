@@ -6,7 +6,14 @@ interface OnReadFileCallback{
     fun onFail(message:String)
 }
 
-data class FileInfo (val FileName:String,val isDirectory:Boolean,var fileType:FileType,var fileDrawable:Int)
+
+interface OnReadTextFileCallback{
+    fun onSuccess(file:String)
+    fun onFail(message:String)
+}
+
+
+data class FileInfo (val fileName:String,val isDirectory:Boolean,var fileType:FileType,var fileDrawable:Int)
 
 enum class FileType{
     TEXT,//文本文件
