@@ -1,11 +1,15 @@
 package com.russell.smb
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.util.Log
 import java.util.*
 
 class Utils {
 
     companion object{
-        public const val SMB_TAG = "russellSmb"
+        const val SMB_TAG = "russellSmb"
         private val videoTypeList = mutableListOf("mp4","mkv","wmv")
         private val musicTypeList = mutableListOf("mp3","m4a","wav","flac")
         private val zipTypeList = mutableListOf("rar","zip","tgz")
@@ -13,7 +17,7 @@ class Utils {
         private val settingTypeList = mutableListOf("properties")
         private val imageTypeList = mutableListOf("jpeg","bmp,","jpg","png","tif","gif","pcx","tga","exif","fpx","svg","psd","cdr","pcd","dxf","ufo","eps","ai","raw","WMF","webp","avif","apng")
 
-        fun getFileType(fileName:String,isDirectory:Boolean,fileInfo: FileInfo){
+        open fun getFileType(fileName:String,isDirectory:Boolean,fileInfo: FileInfo){
             if(isDirectory){
                 fileInfo.fileType= FileType.DIRECTORY
                 fileInfo.fileDrawable =R.drawable.directory
@@ -45,5 +49,23 @@ class Utils {
             }
 
         }
+
+
+        fun startFileActivity(
+            context: Context,
+            path: String,
+            name: String,
+            cls: Class<*>
+        ) {
+            val intent = Intent(context, cls)
+            intent.putExtra("path", path)
+            intent.putExtra("name", name)
+            Log.d(SMB_TAG, "startTextActivity: $path")
+            Log.d(SMB_TAG, "startTextActivity: $name")
+            context.startActivity(intent)
+        }
+
+
+
     }
 }

@@ -1,5 +1,7 @@
 package com.russell.smb
 
+import java.io.InputStream
+
 
 interface OnReadFileCallback{
     fun onSuccess(list:List<FileInfo>)
@@ -12,6 +14,11 @@ interface OnReadTextFileCallback{
     fun onFail(message:String)
 }
 
+
+interface OnReadFileInputStreamCallback{
+    fun onSuccess(file:InputStream)
+    fun onFail(message:String)
+}
 
 data class FileInfo (val fileName:String,val isDirectory:Boolean,var fileType:FileType,var fileDrawable:Int)
 

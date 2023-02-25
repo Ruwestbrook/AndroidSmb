@@ -17,7 +17,9 @@ class FileListActivity : AppCompatActivity() {
                 if(file.isDirectory){
                     replaceFragment(path + "/" + file.fileName)
                 }else if(file.fileType == FileType.TEXT || file.fileType == FileType.PROPERTIES){
-                    TextFileActivity.startTextActivity(this@FileListActivity,path,file.fileName)
+                    Utils.startFileActivity(this@FileListActivity,path,file.fileName,TextActivity::class.java)
+                }else if(file.fileType == FileType.IMAGE){
+                    Utils.startFileActivity(this@FileListActivity,path,file.fileName,ImageActivity::class.java)
                 }
 
             }
@@ -27,7 +29,9 @@ class FileListActivity : AppCompatActivity() {
         SmbClient.instance.clientStatus= object : SmbClient.ClientStatus {
             override fun initStatus(status: SmbClient.Status) {
                 Log.d(SMB_TAG, "initStatus() called with: status = $status")
-                replaceFragment("")
+                if(status == SmbClient.Status.ConnectSuccess){
+                    replaceFragment("/personalPitrure/没整理的")
+                }
             }
         }
 

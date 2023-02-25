@@ -3,10 +3,13 @@
 
     <application>
         <activity
+            android:name=".ImageActivity"
+            android:exported="false" />
+        <activity
             android:name=".FileListActivity"
             android:exported="false" />
         <activity
-            android:name=".TextFileActivity"
+            android:name=".TextActivity"
             android:exported="false" />
     </application>
 
