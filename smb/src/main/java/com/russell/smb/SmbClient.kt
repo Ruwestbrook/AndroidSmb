@@ -2,23 +2,17 @@ package com.russell.smb
 
 import android.util.Log
 import com.hierynomus.msdtyp.AccessMask
-import com.hierynomus.msfscc.FileAttributes
 import com.hierynomus.mssmb2.SMB2CreateDisposition
-import com.hierynomus.mssmb2.SMB2CreateOptions
 import com.hierynomus.mssmb2.SMB2ShareAccess
 import com.hierynomus.smbj.SMBClient
 import com.hierynomus.smbj.SmbConfig
 import com.hierynomus.smbj.auth.AuthenticationContext
-import com.hierynomus.smbj.session.Session
 import com.hierynomus.smbj.share.DiskShare
 import com.hierynomus.smbj.share.File
 import com.russell.smb.Utils.Companion.SMB_TAG
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.io.OutputStream
 import java.util.*
-import java.util.concurrent.Callable
-import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.FutureTask
 import java.util.concurrent.TimeUnit
@@ -107,6 +101,7 @@ class SmbClient() {
 
 
 
+    @Suppress("unused")
     fun openTextFile(path: String, name: String, callback: OnReadTextFileCallback) {
 
         executorService.submit {
@@ -212,14 +207,12 @@ class SmbClient() {
 
     }
 
-    enum class Status(status: Int) {
-        Initialization(0), Connecting(1), ConnectFalse(2), ConnectSuccess(3)
+    enum class Status {
+        Initialization, Connecting, ConnectFalse, ConnectSuccess
     }
 
     interface ClientStatus {
-        fun initStatus(status: Status) {
-
-        }
+        fun initStatus(status: Status)
     }
 
 }

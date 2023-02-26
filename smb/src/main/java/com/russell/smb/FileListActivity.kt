@@ -1,7 +1,5 @@
 package com.russell.smb
 
-import android.content.Context
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +10,7 @@ class FileListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_file_list)
+        Log.d(SMB_TAG, "onCreate: stringFromJNI="+stringFromJNI())
         FileFragment.pageClick = object : PageClick {
             override fun click(path: String, file: FileInfo) {
                 if(file.isDirectory){
@@ -30,7 +29,7 @@ class FileListActivity : AppCompatActivity() {
             override fun initStatus(status: SmbClient.Status) {
                 Log.d(SMB_TAG, "initStatus() called with: status = $status")
                 if(status == SmbClient.Status.ConnectSuccess){
-                    replaceFragment("/personalPitrure/没整理的")
+                    replaceFragment("")
                 }
             }
         }
@@ -54,7 +53,7 @@ class FileListActivity : AppCompatActivity() {
                 }
 
                 override fun onFail(message: String) {
-                    Log.d(Utils.SMB_TAG, "onFail() called with: message = $message")
+                    Log.d(SMB_TAG, "onFail() called with: message = $message")
                 }
 
             })
@@ -63,23 +62,12 @@ class FileListActivity : AppCompatActivity() {
 
     }
 
-
-
+    external fun stringFromJNI(): String
 
     companion object {
-        fun startActivity(
-            context: Context,
-            ip: String,
-            username: String,
-            password: String,
-            fileName: String
-        ) {
-            val intent = Intent(context, FileListActivity::class.java)
-            intent.putExtra("ip", ip)
-            intent.putExtra("username", username)
-            intent.putExtra("password", password)
-            intent.putExtra("fileName", fileName)
-            context.startActivity(intent)
+        // Used to load the 'ffmpeg' library on application startup.
+        init {
+            System.loadLibrary("native-lib")
         }
     }
 }

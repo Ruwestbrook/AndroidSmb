@@ -1,6 +1,5 @@
 package com.russell.smb
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -17,7 +16,7 @@ class Utils {
         private val settingTypeList = mutableListOf("properties")
         private val imageTypeList = mutableListOf("jpeg","bmp,","jpg","png","tif","gif","pcx","tga","exif","fpx","svg","psd","cdr","pcd","dxf","ufo","eps","ai","raw","WMF","webp","avif","apng")
 
-        open fun getFileType(fileName:String,isDirectory:Boolean,fileInfo: FileInfo){
+        fun getFileType(fileName:String,isDirectory:Boolean,fileInfo: FileInfo){
             if(isDirectory){
                 fileInfo.fileType= FileType.DIRECTORY
                 fileInfo.fileDrawable =R.drawable.directory
