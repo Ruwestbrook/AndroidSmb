@@ -59,8 +59,8 @@ class Utils {
             val intent = Intent(context, cls)
             intent.putExtra("path", path)
             intent.putExtra("name", name)
-            Log.d(SMB_TAG, "startTextActivity: $path")
-            Log.d(SMB_TAG, "startTextActivity: $name")
+            Log.d(SMB_TAG, "startActivity: $path")
+            Log.d(SMB_TAG, "startActivity: $name")
             context.startActivity(intent)
         }
 

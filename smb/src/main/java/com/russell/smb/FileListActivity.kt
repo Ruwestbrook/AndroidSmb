@@ -19,6 +19,8 @@ class FileListActivity : AppCompatActivity() {
                     Utils.startFileActivity(this@FileListActivity,path,file.fileName,TextActivity::class.java)
                 }else if(file.fileType == FileType.IMAGE){
                     Utils.startFileActivity(this@FileListActivity,path,file.fileName,ImageActivity::class.java)
+                }else if(file.fileType == FileType.VIDEO){
+                    Utils.startFileActivity(this@FileListActivity,path,file.fileName,VideoActivity::class.java)
                 }
 
             }

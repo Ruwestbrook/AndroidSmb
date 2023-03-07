@@ -138,7 +138,6 @@ class SmbClient() {
     fun openFile(path: String, name: String, callback: OnReadFileInputStreamCallback) {
         executorService.submit {
             try {
-                connectShare!!.getFileInformation("/local.properties")
                 val file: File = connectShare!!.openFile(
                     "$path/$name",
                     EnumSet.of(AccessMask.GENERIC_READ), null,

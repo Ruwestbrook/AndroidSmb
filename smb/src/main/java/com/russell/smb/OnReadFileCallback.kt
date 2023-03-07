@@ -20,6 +20,11 @@ interface OnReadFileInputStreamCallback{
     fun onFail(message:String)
 }
 
+interface OnReadFileStreamCallback{
+    fun onSuccess(file:InputStream)
+    fun onFail(message:String)
+}
+
 data class FileInfo (val fileName:String,val isDirectory:Boolean,var fileType:FileType,var fileDrawable:Int)
 
 enum class FileType{
